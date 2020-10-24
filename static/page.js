@@ -17,24 +17,39 @@ const searchType = {
     SOURCES : 'sources'
 }
 
+const displayMode = {
+    IMAGE : 'Image Mode',
+    TABLE : 'Table Mode'
+}
+
 const endings = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th']
 
 const monthNames = ["January", "February", "March", "April", "May", "June", 
                     "July", "August", "September", "October", "November",
                     "December"]
 
+
+const sortButton = document.getElementById('sort-button');
 // Search elements
+const warning = document.getElementById('warning');
 const searchbar = document.getElementById('searchbar');
 const submit = document.getElementById('submit');
 const articleList = document.getElementById('article-list');
-
+const results = document.getElementById('results');
 // Radio buttons
 const radioENT = document.getElementById('ent');
 const radioTCH = document.getElementById('tch');
 const radioSPT = document.getElementById('spt');
 
+const defaultImgWidth = 300;
+const defaultImgHeight = 300;
+
+let articleLimit = 5;
+let sortByLatest = null;
+let resultsDisplayMode = displayMode.IMAGE;
 let currentArticleList = new Array();
 
+/*
 class Article {
     constructor(author, publisher, title, description, date, url, image=null) {
         this.author = author;
@@ -46,29 +61,60 @@ class Article {
         this.image = image;
     }
 }
+*/
 
-// Startup behavior
+// -------------------------Event Handlers------------------------------------
 
-// Seach behavior
+// Search behavior
 submit.onclick = () => {
     kword = getSearchbarValue();
     category = getSelectedRadioButton();
     searchURL = getURL(category)
+    if (category == searchCategory.NONE) {
+        warning.innerHTML = 'Please select a search category!';
+        setTimeout(() => {warning.innerText = ' ';}, 3000);
+        return
+    } else {
+        warning.innerHTML = '';
 
-    fetch(proxyURL + searchURL).then(res => {
-        return res.json();
-    }).then(obj => {
-        console.log(obj)
-        articles = obj.articles;
-        parseNewArticles(articles);
-    })
-    
-    
-    console.log('Search performed')
+        clearModelArticles();
+        clearViewArticles() 
+        fetch(proxyURL + searchURL).then(res => {
+            return res.json();
+        }).then(obj => {
+            setModelArticles(obj.articles);
+            displayArticles();
+        })
 
-    // Visually reset searchbar value
-    setSearchbarValue('');
+        // Visually reset searchbar value
+        setSearchbarValue('');
+        results.scrollIntoView();
+        }
+    };
+
+sortButton.onclick = () => {
+    if (currentArticleList.length == 0) {
+        warning.innerHTML = 'Please search a topic first!';
+        setTimeout(() => {warning.innerText = ' '}, 3000);
+        return
+    }
+    else if(sortByLatest == null) {
+        sortArticlesByDate(sortByLatest);
+        sortByLatest = true;
+    } else {
+        currentArticleList.reverse();
+        sortByLatest = !sortByLatest;
+    }
+    clearViewArticles();
+    displayArticles();
 };
+
+function setModelArticles(articles) {
+    clearModelArticles();
+    for(let i = 0; i < articleLimit; i++){
+        currentArticleList.push(articles[i]);
+    } 
+}
 
 function clearModelArticles() {
     currentArticleList = new Array(); 
@@ -80,22 +126,16 @@ function clearViewArticles() {
     }
 }
 
-function parseNewArticles(articles, limit = 5){
-    for (let i = 0; i < limit; i++) {
-        currentArticleList.push(articles[i]);
-
-        let parsedDiv = parseArticle(articles[i]);
+function displayArticles(){
+    for (let i = 0; i < articleLimit; i++) {
+        let parsedDiv = parseArticle(currentArticleList[i], resultsDisplayMode);
         let li = document.createElement('li');
-
         li.appendChild(parsedDiv); 
         articleList.appendChild(li);
     } 
-    if (articleList.childElementCount > 10) {
-        clearArticles();
-    }
 }
 
-function sortArticlesByDate (latest) {
+function sortArticlesByDate () {
     let sortFunc = ((a,b) => {
         if (a < b) {
             return -1;
@@ -103,28 +143,52 @@ function sortArticlesByDate (latest) {
             return 1;
         }
     });
-    
-    if(latest) {
-        currentArticleList.sort(sortFunc).reverse()
-    } else {
-        currentArticleList.sort(sortFunc);
-    }
+    currentArticleList.sort(sortFunc);
+    currentArticleList.reverse();
 }
 
     
-function parseArticle(article) {
-    let newDiv = document.createElement('div');
-    let userFriendlyDate = getUserFriendlyDate(article.publishedAt);
-    newDiv.innerHTML = `
-    <h3>"${article.title}"</h3> 
-    <b>Author</b>: ${article.author}<br> 
-    <b>Date Published</b>: ${userFriendlyDate}<br> 
-    <b>Website</b>: ${article.source.name} <br>
-    <p> Summary: ${article.description} </p> 
-    <p> Interested? Read more <a href="${article.url}">here</a></p>`
-    
-    return newDiv;
-}
+function parseArticle(article, mode) {
+    if (mode == displayMode.IMAGE) {
+        let newDiv = document.createElement('div');
+        let userFriendlyDate = getUserFriendlyDate(article.publishedAt);
+        let author = article.author;
+
+        let img = 'No image found';
+        if(article.author == null) {
+            author = 'No author found'; 
+        }
+        if (article.urlToImage != null) {
+            let image = new Image();
+            image.src = article.urlToimage;
+
+            let width = image.width;
+            let height = image.height;
+            let aspectRatio = width/height;
+            if (width > height) {
+                width = defaultImgWidth;
+                height = aspectRatio * width;
+            } else {
+                height = defaultImgHeight;
+                width = aspectRatio * height;
+            }
+            img = `<img src = "${article.urlToImage}" width = "${width}" height = "${height}"></img>`
+        } 
+
+        newDiv.innerHTML = 
+        img + `
+
+        <h3>"${article.title}"</h3> 
+        
+        <b>Author</b>: ${author}<br> 
+        <b>Date Published</b>: ${userFriendlyDate}<br> 
+        <b>Website</b>: ${article.source.name} <br>
+        <p> Summary: ${article.description} </p> 
+        <p> Interested? Read more <a href="${article.url}" target = "_black">here</a></p>`
+        return newDiv;
+    }
+    return;
+    }
 
 function getUserFriendlyDate(date) {
     let dateObj = new Date(date);
@@ -135,15 +199,13 @@ function getUserFriendlyDate(date) {
 
     let ampm = dateObj.getHours() > 11 ? 'pm' : 'am'; 
     let hour = dateObj.getHours() % 12 == 0 ? '12' : (dateObj.getHours() % 12).toString();
-    let mins = dateObj.getMinutes() == 0 ? "00" : dateObj.getMinutes().toString();
+    let mins = dateObj.getMinutes() < 10 ? '0' + dateObj.getMinutes().toString() :
+                                                 dateObj.getMinutes().toString();
 
     // Ex: June 4th, 2020 at 4:20pm
     return  `${monthName} ${day}${dayEnding}, ${year} at ${hour}:${mins}${ampm}`;
 }
 
-function getUserFriendlyMonth(month) {
-
-}
 
 function getURL(category, kword = '', type = searchType.TOP, country = 'us') {
     if (category != searchCategory.NONE) {

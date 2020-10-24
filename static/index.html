@@ -1,32 +1,56 @@
 <html>
-<head>    
+<head>   
+    <link rel = 'stylesheet' href = 'styles.css'> 
 </head>
 <body>
-
-<p>HELLo</p>
-<form>
-    <div id = "test"></div>
-    <label for ="searchbar">News Searchbar</label>
-    <input type = "text" id = "searchbar" />
-    <button type = "button" id = "submit">Submit</button>
-    <br />
-    <br />
-</form>
-<form>
-    <input type = "radio" name = "category" id = "ent" value = "entertainment">
-    <label for = "entertainment">Entertainment</label><br>
-    <input type = "radio" name = "category" id = "spt" value = "sports">
-    <label for = "sports">Sports</label><br>
-    <input type = "radio" name = "category" id = "tch" value = "tech">
-    <label for = "tech">Technology</label><br>
-</form>
-
+<div class = "top">
+    <div class = 'search-div'>
+        <form>
+            <span id = 'warning'></span>
+            <br >
+            <!--<label for ="searchbar">News Searchbar</label>-->
+            <div class = 'bar-parent'>
+            <input type = "text" id = "searchbar" placeholder="Search for..."/>
+            <img src = 'searchIcon.png' id = 'submit'></img>
+            </div>
+            <br />
+            <br />
+        </form>
+    </div>
+    
+    <div id = 'left' class = 'column'>
+        <p>yeah</p>
+    </div>
+    <div id = 'mid' class = 'column'>
+        
+    </div>
+    
+    
+    <div id = 'right' class = 'column'>
+        <p>yeah</p>
+    </div>
+    <!--
+    <form>
+        <input type = "radio" name = "category" id = "ent" value = "entertainment">
+        <label for = "entertainment">Entertainment</label><br>
+        <input type = "radio" name = "category" id = "spt" value = "sports">
+        <label for = "sports">Sports</label><br>
+        <input type = "radio" name = "category" id = "tch" value = "tech">
+        <label for = "tech">Technology</label><br>
+    </form>
+    <form>
+        <button type = "button" id = "sort-button">Sort</button>
+    </form>
+    -->
+   </div>
 <div id = "results">
-<ul id = "article-list">
-</ul>
+    <ul id = "article-list">
+    </ul>
 </div>
 
 
 <script type = "text/javascript" src = "page.js"></script>
 </body>
 </html>
+
+https://codepen.io/mrnathan8/pen/jAfFJ
