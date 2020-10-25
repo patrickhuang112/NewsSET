@@ -1,7 +1,7 @@
 # NewsSET
 
-An express web application for the 2020 Capital One Software Engineering Summit Challenge.
-
+An express web application for the 2020 Capital One Software Engineering Summit Challenge. Website is viewable online 
+<a href= "https://phuang-newsset-ses.herokuapp.com/">here</a>
 ## Some Notes:
 <ul>
 <li><b>Please run the website on Firefox!</b>: 
