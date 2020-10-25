@@ -1,5 +1,5 @@
 // Patrick Huang, 2020
-
+const PORT = process.env.PORT || 8000;
 const express = require('express');
 const app = express();
 
@@ -18,6 +18,6 @@ app.get ('/', (req, res) =>{
 });
 
 // Listening on part 8000 (Go to 'localhost:8000') in browser to see page
-app.listen(8000, () =>{
-    console.log('Listening on port 8000...');
+app.listen(PORT, () =>{
+    console.log('Listening on port...');
 });
