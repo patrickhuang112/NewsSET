@@ -15,10 +15,6 @@ app.get ('/', (req, res) =>{
     res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-app.get('/search', (req, res) => {
-    res.sendFile(path.join(__dirname + '/search.html')) 
-})
-
 // Listening on part 8000 (Go to 'localhost:8000') in browser to see page
 app.listen(8000, () =>{
     console.log('Listening on port 8000...');

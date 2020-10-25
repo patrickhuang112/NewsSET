@@ -7,7 +7,7 @@ body {
 
 .top {
     background: linear-gradient(rgba(94, 222, 252, .7), rgba(255, 209, 214, .7));
-    height : 725px;
+    height : 720px;
     position : absolute;	
     width: 100%;
     margin : 0px;
@@ -98,6 +98,7 @@ body {
 
 .warning-wrapper {
     position:absolute;
+    top:-5px;
     width:100%;
     text-align:center;   
 }
@@ -174,10 +175,11 @@ body {
     position : absolute;
     width : 70%;
     left : 15%;
+    top: 85%;
 }
 #results {
     position : absolute;
     width : 70%;
     left : 15%;
-    top : 725px;
+    top : 720px;
 }

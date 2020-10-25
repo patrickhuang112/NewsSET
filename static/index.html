@@ -9,10 +9,7 @@
         <div class = 'warning-wrapper'>
             <span id = 'warning'></span>
         </div>
-
         <br>
-        <br>
-        
         <div class = 'bar-parent'>
             <div class = 'bar-wrapper'>
                 <input type = "text" id = "searchbar" placeholder="Search for... or press enter for top news"/>
@@ -20,15 +17,21 @@
                 <img src = 'options.png' id = 'option'></img>
             </div>
         <br>
-        <br>
-        <br>
             <div id = 'show'>
                 <div id = 'select-wrapper'>
-                    <label for="dropdown">Number of Articles to display:</label>
+                    <label for="dropdown">Number of articles to display:</label>
                     <select name="dropdown" id="limit">
                         <option value="5" selected>5</option>
                         <option value="10">10</option>
                         <option value="20">20</option>
+                    </select>
+                    <br>
+                    <label for="dropdown2">News category to search for:</label>
+                    <select name="dropdown2" id="search-type">
+                        <option value='none' selected>No category</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="sports">Sports</option>
+                        <option value="technology">Technology</option>
                     </select>
                 </div>
             </div>
@@ -39,20 +42,20 @@
     
     <div id = 'left' class = 'column'>
         <div class = "column-text">
-        <p>Click Here for Entertainment News</p>
+        <p>Click Here for the Top Entertainment News</p>
         </div>
     </div>
 
     <div id = 'mid' class = 'column'>
         <div class = "column-text">
-        <p>Click Here for Sports News</p>
+        <p>Click Here for the Top Sports News</p>
         </div>
         
     </div>
     
     <div id = 'right' class = 'column'>
         <div class = "column-text">
-        <p>Click Here for Technology News</p>
+        <p>Click Here for the Top Technology News</p>
         </div>
     </div>
     
