@@ -19,7 +19,7 @@ on google chrome. However, the website does seem to work for some reason on Fire
     it here. If I were making this to actually work, any keyword search would
     just be a general search and not be constrained by a category, since if
     we have a keyword, results will likely fall in that category already.</li>
-<li>If the news API retursn no articles, a message will show above the search bar</li>
+<li>If the news API returns no articles, a message will show above the search bar</li>
 <li>The three horizontal bars is the options menu. Click the icon for more options about organizing searched news stories</li>
 <li>Missing author and summary content will say: "No author found" or "No summary available"</li>
 <li>Missing images will say "No image found" or "Image failed to load"</li>
