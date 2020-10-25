@@ -144,7 +144,7 @@ function displayArticles(){
         return 
     } else {
         for (let i = 0; i < limit; i++) {
-            let parsedDiv = parseArticle(currentArticleList[i], resultsDisplayMode);
+            let parsedDiv = parseArticle(currentArticleList[i]);
             let li = document.createElement('li');
             li.appendChild(parsedDiv); 
             articleList.appendChild(li);
@@ -154,7 +154,7 @@ function displayArticles(){
 }
 
 // Set view (user-facing) information for a single article    
-function parseArticle(article, mode) {
+function parseArticle(article) {
     let newDiv = document.createElement('div');
     let userFriendlyDate = getUserFriendlyDate(article.publishedAt);
     let author = article.author;
