@@ -16,9 +16,8 @@ on google chrome. However, the website does seem to work for some reason on Fire
     kind of keyword search) had to be filtered by the three categories above.
     For some reason with this news API, using keyword searches while 
     also constraining by category for top headlines oftens yields very few results, but I wanted to meet the project specs so I included 
-    it here. If I were making this to actually work, any keyword search would
-    just be a general search and not be constrained by a category, since if
-    we have a keyword, results will likely fall in that category already.</li>
+    it here. If I were making this to actually work the best it could be, any keyword search would
+    just be a general search and not be constrained by a category.</li>
 <li>If the news API returns no articles, a message will show above the search bar</li>
 <li>The three horizontal bars is the options menu. Click the icon for more options about organizing searched news stories</li>
 <li>Missing author and summary content will say: "No author found" or "No summary available"</li>
