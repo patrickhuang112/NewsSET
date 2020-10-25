@@ -47,7 +47,6 @@ const articleLimit = document.getElementById('limit');
 const defaultImgWidth = 300;
 const defaultImgHeight = 300;
 let sortByLatest = null;
-let resultsDisplayMode = displayMode.IMAGE;
 let currentArticleList = new Array();
 
 // -------------------------EVENT HANDLERS------------------------------------
