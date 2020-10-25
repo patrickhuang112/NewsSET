@@ -3,6 +3,7 @@ const proxyURL = "https://cors-anywhere.herokuapp.com/";
 const apiKey = 'b685b96be5b94e67917e75113d2e5809';
 const baseURL = 'http://newsapi.org/v2/';
 
+// Enums
 const searchCategory = {
     SPORTS : 'sports',
     ENT : 'entertainment',
@@ -16,11 +17,7 @@ const searchType = {
     SOURCES : 'sources'
 }
 
-const displayMode = {
-    IMAGE : 'Image Mode',
-    TABLE : 'Table Mode'
-}
-
+// Model to View info
 const endings = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th']
 
 const monthNames = ["January", "February", "March", "April", "May", "June", 
@@ -32,34 +29,30 @@ const left = document.getElementById('left');
 const right = document.getElementById('right');
 const mid = document.getElementById('mid');
 
-const sortButton = document.getElementById('sort-button');
-const articleLimit = document.getElementById('limit');
-
 // Search elements
 const warning = document.getElementById('warning');
 const searchbar = document.getElementById('searchbar');
 const submit = document.getElementById('submit');
+
+// Results
 const articleList = document.getElementById('article-list');
 const results = document.getElementById('results');
+
+// User options
 const option = document.getElementById('option');
 const userSearchCategory = document.getElementById('search-type');
+const articleLimit = document.getElementById('limit');
 
-// Radio buttons
-const radioDiv = document.getElementById('show');
-const radioENT = document.getElementById('ent');
-const radioTCH = document.getElementById('tch');
-const radioSPT = document.getElementById('spt');
-
+// Other useful info and initialized values
 const defaultImgWidth = 300;
 const defaultImgHeight = 300;
-
 let sortByLatest = null;
 let resultsDisplayMode = displayMode.IMAGE;
 let currentArticleList = new Array();
 
 // -------------------------EVENT HANDLERS------------------------------------
 
-// Search behavior
+// Search behavior function
 let generalSearch = (category) => {
 
     kword = getSearchbarValue();
@@ -84,8 +77,13 @@ let generalSearch = (category) => {
     
 };
 
+// Search Entertainment Category
 left.onclick = () => {generalSearch(searchCategory.ENT)};
+
+// Search Sports Category
 mid.onclick = () => {generalSearch(searchCategory.SPORTS)};
+
+// Search Tech category
 right.onclick = () => {generalSearch(searchCategory.TECH)}; 
 
 // FYI To Capital One people:
@@ -99,14 +97,17 @@ right.onclick = () => {generalSearch(searchCategory.TECH)};
     just be a general search and not be constrained by a category, since if
     we have a keyword, results will likely fall in that category already.
 */
+// General Search 
 submit.onclick = () => {generalSearch(userSearchCategory.value)};
 
+// Allow for enter key press to search
 searchbar.addEventListener("keydown", (event) => {
     if (event.key == "Enter") {
         generalSearch();
     }
 });
 
+// Enable/Disable search options
 option.onclick = () => {
     show.classList.toggle('active');
 };
@@ -114,7 +115,7 @@ option.onclick = () => {
 
 // -----------------------NON EVENT HANDLERS ----------------------------------
 
-
+// Set model article list
 function setModelArticles(articles) {
     clearModelArticles();
     let limit = Math.min(parseInt(articleLimit.value), articles.length);
@@ -123,16 +124,19 @@ function setModelArticles(articles) {
     } 
 }
 
+// Clear model article list
 function clearModelArticles() {
     currentArticleList = new Array(); 
 }
 
+// Clear view (user-facing) article list
 function clearViewArticles() {
     while(articleList.firstChild != null) {
         articleList.removeChild(articleList.firstChild);
     }
 }
 
+// Set view (user-facing) article list
 function displayArticles(){
     let limit = Math.min(parseInt(articleLimit.value), currentArticleList.length);
     if (limit == 0) {
@@ -150,70 +154,61 @@ function displayArticles(){
     
 }
 
-function sortArticlesByDate () {
-    let sortFunc = ((a,b) => {
-        if (a < b) {
-            return -1;
+// Set view (user-facing) information for a single article    
+function parseArticle(article, mode) {
+    let newDiv = document.createElement('div');
+    let userFriendlyDate = getUserFriendlyDate(article.publishedAt);
+    let author = article.author;
+    let img = 'No image found';
+
+    let description = article.description;
+    if(article.author == null || author == '') {
+        author = 'No author found'; 
+    }
+    if (article.urlToImage != null) {
+        // Reformat/resize image
+        let image = new Image();
+        image.src = article.urlToimage;
+
+        let width = image.width;
+        let height = image.height;
+        let aspectRatio = width/height;
+        if (width > height) {
+            width = defaultImgWidth;
+            height = aspectRatio * width;
         } else {
-            return 1;
+            height = defaultImgHeight;
+            width = aspectRatio * height;
         }
-    });
-    currentArticleList.sort(sortFunc);
-    currentArticleList.reverse();
+
+        // This error function is if the image is not able to load
+        let error = () => {
+            img = 'Image failed to load';
+            console.log('lol');
+        }
+        let imgStyle = `display:block;margin-left:auto; margin-right:auto;`
+        img = `<img src = "${article.urlToImage}" style = "${imgStyle}" 
+                width = "${width}" height = "${height} onerror=${error}"></img>`
+    }
+    if (description == null) {
+        description = 'No summary available.';
+    }
+
+    newDiv.innerHTML = 
+    img + `
+
+    <h3>"${article.title}"</h3> 
+    
+    <b>Author</b>: ${author}<br> 
+    <b>Date Published</b>: ${userFriendlyDate}<br> 
+    <b>Website</b>: ${article.source.name} <br>
+    <p> Summary: ${description} </p> 
+    <p> Interested? Read more <a href="${article.url}" target = "_black">here</a></p>`
+    return newDiv;
 }
 
-    
-function parseArticle(article, mode) {
-    if (mode == displayMode.IMAGE) {
-        let newDiv = document.createElement('div');
-        let userFriendlyDate = getUserFriendlyDate(article.publishedAt);
-        let author = article.author;
-        let img = 'No image found';
-        let description = article.description;
-        if(article.author == null || author == '') {
-            author = 'No author found'; 
-        }
-        if (article.urlToImage != null) {
-            let image = new Image();
-            image.src = article.urlToimage;
 
-            let width = image.width;
-            let height = image.height;
-            let aspectRatio = width/height;
-            if (width > height) {
-                width = defaultImgWidth;
-                height = aspectRatio * width;
-            } else {
-                height = defaultImgHeight;
-                width = aspectRatio * height;
-            }
-            let error = () => {
-                img = 'Image failed to load';
-                console.log('lol');
-            }
-            let imgStyle = `display:block;margin-left:auto; margin-right:auto;`
-            img = `<img src = "${article.urlToImage}" style = "${imgStyle}" 
-                    width = "${width}" height = "${height} onerror=${error}"></img>`
-        }
-        if (description == null) {
-            description = 'No summary available.';
-        }
-
-        newDiv.innerHTML = 
-        img + `
-
-        <h3>"${article.title}"</h3> 
-        
-        <b>Author</b>: ${author}<br> 
-        <b>Date Published</b>: ${userFriendlyDate}<br> 
-        <b>Website</b>: ${article.source.name} <br>
-        <p> Summary: ${description} </p> 
-        <p> Interested? Read more <a href="${article.url}" target = "_black">here</a></p>`
-        return newDiv;
-    }
-    return;
-    }
-
+// Return view (user-facing) text for article publish date
 function getUserFriendlyDate(date) {
     let dateObj = new Date(date);
     let monthName = monthNames[dateObj.getMonth()];
@@ -230,7 +225,7 @@ function getUserFriendlyDate(date) {
     return  `${monthName} ${day}${dayEnding}, ${year} at ${hour}:${mins}${ampm}`;
 }
 
-
+// Format the URL needed for a search
 function getURL(category, kword = '', country = 'us', type = searchType.TOP) {
     if (category != searchCategory.NONE) {
         if (kword != ''){
@@ -250,10 +245,12 @@ function getURL(category, kword = '', country = 'us', type = searchType.TOP) {
     }
 }
 
+// Getter for searchbar
 function getSearchbarValue() {
     return searchbar.value;
 }
 
+// Setter for searchbar
 function setSearchbarValue(val) {
     searchbar.value = val;
 }
