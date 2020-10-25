@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/patrickhuang112/NewsSET/issues"
   },
-  "homepage": "https://github.com/patrickhuang112/NewsSET#readme"
+  "homepage": "https://github.com/patrickhuang112/NewsSET#readme",
+  "dependencies": {
+    "express":"*",
+    "body-parser":"*"
+  }
 }
