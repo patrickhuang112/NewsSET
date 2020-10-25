@@ -71,8 +71,8 @@ let generalSearch = (category) => {
     setSearchbarValue('');
 
     // I cannot for the life of me figure out why this doesn't work automatically,
-    // so I am calling this delayed by 500 milliseconds
-    setTimeout(() => {results.scrollIntoView({behavior: "smooth"});}, 500);
+    // so I am calling this delayed by one second
+    setTimeout(() => {results.scrollIntoView({behavior: "smooth"});}, 1000);
     
 };
 
