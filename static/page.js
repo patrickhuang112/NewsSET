@@ -1,4 +1,3 @@
-
 // News API url infos
 const proxyURL = "https://cors-anywhere.herokuapp.com/";
 const apiKey = 'b685b96be5b94e67917e75113d2e5809';
@@ -28,15 +27,25 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
                     "July", "August", "September", "October", "November",
                     "December"]
 
+// Divs
+const left = document.getElementById('left');
+const right = document.getElementById('right');
+const mid = document.getElementById('mid');
 
 const sortButton = document.getElementById('sort-button');
+const articleLimit = document.getElementById('limit');
+
 // Search elements
 const warning = document.getElementById('warning');
 const searchbar = document.getElementById('searchbar');
 const submit = document.getElementById('submit');
 const articleList = document.getElementById('article-list');
 const results = document.getElementById('results');
+const bottom = document.getElementById('bottom');
+const option = document.getElementById('option');
+
 // Radio buttons
+const radioDiv = document.getElementById('show');
 const radioENT = document.getElementById('ent');
 const radioTCH = document.getElementById('tch');
 const radioSPT = document.getElementById('spt');
@@ -44,74 +53,67 @@ const radioSPT = document.getElementById('spt');
 const defaultImgWidth = 300;
 const defaultImgHeight = 300;
 
-let articleLimit = 5;
 let sortByLatest = null;
 let resultsDisplayMode = displayMode.IMAGE;
 let currentArticleList = new Array();
 
-/*
-class Article {
-    constructor(author, publisher, title, description, date, url, image=null) {
-        this.author = author;
-        this.publisher = publisher;
-        this.title = title;
-        this.description = description;
-        this.date = date
-        this.url = url;
-        this.image = image;
-    }
-}
-*/
-
-// -------------------------Event Handlers------------------------------------
+// -------------------------EVENT HANDLERS------------------------------------
 
 // Search behavior
-submit.onclick = () => {
+let generalSearch = (category) => {
+
     kword = getSearchbarValue();
-    category = getSelectedRadioButton();
-    searchURL = getURL(category)
-    if (category == searchCategory.NONE) {
+    
+        /*
         warning.innerHTML = 'Please select a search category!';
-        setTimeout(() => {warning.innerText = ' ';}, 3000);
+        
         return
-    } else {
-        warning.innerHTML = '';
+        */
+    
+    searchURL = getURL(category, kword);
+    warning.innerHTML = '';
 
-        clearModelArticles();
-        clearViewArticles() 
-        fetch(proxyURL + searchURL).then(res => {
-            return res.json();
-        }).then(obj => {
-            setModelArticles(obj.articles);
-            displayArticles();
-        })
+    clearModelArticles();
+    clearViewArticles() 
+    fetch(proxyURL + searchURL).then(res => {
+        return res.json();
+    }).then(obj => {
+        setModelArticles(obj.articles);
+        console.log(obj.articles);
+        displayArticles();
+    })
 
-        // Visually reset searchbar value
-        setSearchbarValue('');
-        results.scrollIntoView();
-        }
-    };
-
-sortButton.onclick = () => {
-    if (currentArticleList.length == 0) {
-        warning.innerHTML = 'Please search a topic first!';
-        setTimeout(() => {warning.innerText = ' '}, 3000);
-        return
-    }
-    else if(sortByLatest == null) {
-        sortArticlesByDate(sortByLatest);
-        sortByLatest = true;
-    } else {
-        currentArticleList.reverse();
-        sortByLatest = !sortByLatest;
-    }
-    clearViewArticles();
-    displayArticles();
+    // Visually reset searchbar value
+    setSearchbarValue('');
+    // I cannot for the life of me figure out why this doesn't work automatically,
+    // so I am calling this delayed by 500 milliseconds
+    setTimeout(() => {results.scrollIntoView({behavior: "smooth"});}, 500);
+    
 };
+
+left.onclick = () => {generalSearch(searchCategory.ENT)};
+mid.onclick = () => {generalSearch(searchCategory.SPORTS)};
+right.onclick = () => {generalSearch(searchCategory.TECH)}; 
+
+submit.onclick = () => {generalSearch(searchCategory.NONE)};
+
+searchbar.addEventListener("keydown", (event) => {
+    if (event.key == "Enter") {
+        generalSearch();
+    }
+});
+
+option.onclick = () => {
+    show.classList.toggle('active');
+};
+
+
+// -----------------------NON EVENT HANDLERS ----------------------------------
+
 
 function setModelArticles(articles) {
     clearModelArticles();
-    for(let i = 0; i < articleLimit; i++){
+    for(let i = 0; i < parseInt(articleLimit.value); i++){
         currentArticleList.push(articles[i]);
     } 
 }
@@ -127,7 +129,7 @@ function clearViewArticles() {
 }
 
 function displayArticles(){
-    for (let i = 0; i < articleLimit; i++) {
+    for (let i = 0; i < parseInt(articleLimit.value); i++) {
         let parsedDiv = parseArticle(currentArticleList[i], resultsDisplayMode);
         let li = document.createElement('li');
         li.appendChild(parsedDiv); 
@@ -153,7 +155,6 @@ function parseArticle(article, mode) {
         let newDiv = document.createElement('div');
         let userFriendlyDate = getUserFriendlyDate(article.publishedAt);
         let author = article.author;
-
         let img = 'No image found';
         if(article.author == null) {
             author = 'No author found'; 
@@ -172,7 +173,9 @@ function parseArticle(article, mode) {
                 height = defaultImgHeight;
                 width = aspectRatio * height;
             }
-            img = `<img src = "${article.urlToImage}" width = "${width}" height = "${height}"></img>`
+            let imgStyle = `display:block;margin-left:auto; margin-right:auto;`
+            img = `<img src = "${article.urlToImage}" style = "${imgStyle}" 
+                    width = "${width}" height = "${height}"></img>`
         } 
 
         newDiv.innerHTML = 
@@ -207,16 +210,23 @@ function getUserFriendlyDate(date) {
 }
 
 
-function getURL(category, kword = '', type = searchType.TOP, country = 'us') {
+function getURL(category, kword = '', country = 'us', type = searchType.TOP) {
     if (category != searchCategory.NONE) {
-        url = `${baseURL}${type}?country=${country}&category=${category}&apikey=${apiKey}`;
-        return url
-    } else {
-        return url = `${baseURL}${type}?country=${country}&apikey=${apiKey}`;
+        return `${baseURL}${type}?country=${country}&category=${category}&apikey=${apiKey}`; 
+    } else { 
+        if (kword != '') {
+            type = searchType.EVERYTHING;
+            return `${baseURL}${type}?q=${kword}&apikey=${apiKey}`;
+        } else {
+            type = searchType.TOP;
+            return `${baseURL}${type}?country=${country}&apikey=${apiKey}`;  
+        }
+        
     }
 }
 
 
+/*
 function getSelectedRadioButton() {
     if (radioENT.checked) {
         return searchCategory.ENT;
@@ -228,6 +238,7 @@ function getSelectedRadioButton() {
         return searchCategory.NONE;
     }
 }
+*/
 
 function getSearchbarValue() {
     return searchbar.value;
