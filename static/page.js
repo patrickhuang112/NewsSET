@@ -64,8 +64,8 @@ let generalSearch = (category) => {
         return res.json();
     }).then(obj => {
         if (obj.articles == null) {
-            warning.innerHTML = `Chrome does not work! 426 (Upgrade Required) 
-            and this only happens on chrome. Please switch to Firefox`
+            warning.innerHTML = `Chrome does not work! Error 426 (HTTP Upgrade Required) 
+            and this only happens on Chrome. Please switch to Firefox.`
             setTimeout(() => {warning.innerHTML = ''}, 3000); 
         } else {
             warning.innerHTML = 'Article found!'
