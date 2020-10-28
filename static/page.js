@@ -1,7 +1,7 @@
 // News API url infos
 const proxyURL = "https://cors-anywhere.herokuapp.com/";
 const apiKey = '78b9d599c4f94f8fa3afb1a5458928d6';
-const baseURL = 'https://newsapi.org/v2/';
+const baseURL = 'http://newsapi.org/v2/';
 
 // Enums
 const searchCategory = {
@@ -59,11 +59,23 @@ let generalSearch = (category) => {
 
     clearModelArticles();
     clearViewArticles() 
+    warning.innerHTML = 'Searching for article...';
     fetch(proxyURL + searchURL).then(res => {
         return res.json();
     }).then(obj => {
-        setModelArticles(obj.articles);
-        displayArticles();
+        if (obj.articles == null) {
+            warning.innerHTML = `Chrome does not work! 426 (Upgrade Required) 
+            and this only happens on chrome. Please switch to Firefox`
+            setTimeout(() => {warning.innerHTML = ''}, 3000); 
+        } else {
+            warning.innerHTML = 'Article found!'
+            setModelArticles(obj.articles);
+            console.log(obj.articles);
+            displayArticles();
+            setTimeout(() => {warning.innerHTML = ''}, 3000); 
+        }
+    }).then( res => {
+        setTimeout(() => {results.scrollIntoView({behavior: "smooth"});}, 100);
     })
 
     // Visually reset searchbar value
@@ -71,8 +83,6 @@ let generalSearch = (category) => {
 
     // I cannot for the life of me figure out why this doesn't work automatically,
     // so I am calling this delayed by one second
-    setTimeout(() => {results.scrollIntoView({behavior: "smooth"});}, 1000);
-    
 };
 
 // Search Entertainment Category
