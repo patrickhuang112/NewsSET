@@ -13,12 +13,11 @@ Go to localhost:8000 to view the website locally.
 <ul>
 <li><b>Please run the website on Firefox!</b>: 
 <br>
-I originally just wanted to make a website without having to use node/express, but I ran
-into issues early on where the NewsAPI free developer key doesn't allow for requests to the
-API through a web browser, and only allows for localhost requests. I thus had to run my files
-on localhost using node/express. When I published the website online 
-<a href= "https://phuang-newsset-ses.herokuapp.com/">here</a>, it again runs into the same issue
-on google chrome. However, the website does seem to work for some reason on Firefox. </li>
+I previously had issues with the free API key only working on Firefox, but after
+the Capital One engineers supplied a business API key, I keep getting 426 http
+upgrade required on Chrome, but no error on Firefox. I have posted a question 
+on the challenge page and will update when I get a response, but currently, the 
+website STILL only works on Firefox and not on Goolge Chrome</li>
 <li>The project specifications says any search (which I assumed including any
     kind of keyword search) had to be filtered by the three categories above.
     For some reason with this news API, using keyword searches while 
