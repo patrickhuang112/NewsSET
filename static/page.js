@@ -1,6 +1,6 @@
 // News API url infos
 const proxyURL = "https://cors-anywhere.herokuapp.com/";
-const apiKey = 'b685b96be5b94e67917e75113d2e5809';
+const apiKey = '78b9d599c4f94f8fa3afb1a5458928d6';
 const baseURL = 'http://newsapi.org/v2/';
 
 // Enums
@@ -59,7 +59,7 @@ let generalSearch = (category) => {
 
     clearModelArticles();
     clearViewArticles() 
-    fetch(proxyURL + searchURL).then(res => {
+    fetch(searchURL).then(res => {
         return res.json();
     }).then(obj => {
         setModelArticles(obj.articles);
