@@ -3,7 +3,7 @@
 An express web application for the 2020 Capital One Software Engineering Summit Challenge. Website is viewable online 
 <a href= "https://phuang-newsset-ses.herokuapp.com/">here</a>
 ## Running the website:
-Run this command
+Navigate to this folder's home directory and run this command
 ```
 node index.js
 ```
