@@ -59,11 +59,10 @@ let generalSearch = (category) => {
 
     clearModelArticles();
     clearViewArticles() 
-    fetch(searchURL).then(res => {
+    fetch(proxyURL + searchURL).then(res => {
         return res.json();
     }).then(obj => {
         setModelArticles(obj.articles);
-        console.log(obj.articles);
         displayArticles();
     })
 
