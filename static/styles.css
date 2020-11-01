@@ -29,6 +29,10 @@ body {
     z-index:7;
 }
 
+.bottom-right:hover {
+    transform : scale(1.1);
+}
+
 #scrollto {
     position : absolute;
     top:0px;
