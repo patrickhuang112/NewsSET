@@ -14,6 +14,25 @@ body {
     padding : 0px;
 }
 
+.top-right {
+    position : fixed;
+    right : 20px;
+    top :15 px;
+    z-index:7; 
+    text-align: right;
+}
+
+.bottom-right {
+    position : fixed;
+    right : 0px;
+    bottom :0px;
+    z-index:7;
+}
+
+#scrollto {
+    position : absolute;
+    top:0px;
+}
 /*------------------------------ THREE COLUMNS -----------------------*/
 .column {
     transition: all .5s ease-in-out;
@@ -164,14 +183,14 @@ body {
     opacity : 70%;
     display : block; 
     position : absolute;
-    width : 70%;
-    left : 15%;
+    width : 80%;
+    left : 10%;
     top: 85%;
 }
 
 #select-wrapper {
     position : absolute;
-    left : 30%;
+    left : 25%;
 }
 
 
@@ -181,7 +200,7 @@ body {
 
 #results {
     position : absolute;
-    width : 70%;
-    left : 15%;
+    width : 80%;
+    left : 10%;
     top : 720px;
 }

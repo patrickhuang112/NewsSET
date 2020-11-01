@@ -4,6 +4,7 @@
 </head>
 
 <body>
+<div id = "scrollto"></div>
 <div class = "top">
     <div class = 'search-div'>
         <div class = 'warning-wrapper'>
@@ -28,10 +29,21 @@
                     <br>
                     <label for="dropdown2">News category to search for:</label>
                     <select name="dropdown2" id="search-type">
-                        <option value='none' selected>No category</option>
+                        <option value="none" selected>No category</option>
                         <option value="entertainment">Entertainment</option>
                         <option value="sports">Sports</option>
                         <option value="technology">Technology</option>
+                    </select>
+                    <br>
+                    <label for="dropdown3">Display news from:</label>
+                    <select name="dropdown3" id="sort-type">
+                        <option value= "no" selected>Latest to earliest</option>
+                        <option value= "yes">Earliest to latest</option>
+                    </select>
+                    <br>
+                    <label for="dropdown4">Previous Searches (Latest to earliest)</label>
+                    <select name="dropdown4" id="prev-searches">
+                        <option id = "prev-searches-first">No searches done</option>
                     </select>
                 </div>
             </div>
@@ -64,7 +76,13 @@
         <ul id = "article-list">
         </ul>
 </div>
-
+<div class = 'top-right'>
+    <p>Made by Patrick Huang</p>
+    <a href= "https://github.com/patrickhuang112/NewsSET">Github</a>
+</div>
+<div class = 'bottom-right'>
+<img src = 'images/up.png' id = 'up'></img>
+</div>
 <script type = "text/javascript" src = "page.js"></script>
 </body>
 </html>

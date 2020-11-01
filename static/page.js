@@ -42,21 +42,25 @@ const results = document.getElementById('results');
 const option = document.getElementById('option');
 const userSearchCategory = document.getElementById('search-type');
 const articleLimit = document.getElementById('limit');
+const sortReversed = document.getElementById('sort-type');
+const up = document.getElementById('up');
+const scrollto = document.getElementById('scrollto');
+const prevSearches = document.getElementById('prev-searches');
+const prevSearchesFirst = document.getElementById('prev-searches-first');
 
 // Other useful info and initialized values
-const defaultImgWidth = 300;
-const defaultImgHeight = 300;
-let sortByLatest = null;
+const testNullImg = 'https://admin.ncaa.com/_flysystem/public-s3/images/2020-10/ohio-state-penn-state_0.jpg'
+const defaultImgWidth = window.innerWidth / 3;
+const defaultImgHeight = window.innerHeight / 3;
 let currentArticleList = new Array();
-
+const previousSearches = new Array();
+let sortByLatest = null;
 // -------------------------EVENT HANDLERS------------------------------------
 
 // Search behavior function
 let generalSearch = (category) => {
-
     kword = getSearchbarValue();
-    searchURL = getURL(category, kword);
-
+    [searchURL, prev] = getURL(category, kword);
     clearModelArticles();
     clearViewArticles() 
     warning.innerHTML = 'Searching for article...';
@@ -67,15 +71,22 @@ let generalSearch = (category) => {
             warning.innerHTML = `Chrome does not work! Error 426 (HTTP Upgrade Required) 
             and this only happens on Chrome. Please switch to Firefox.`
             setTimeout(() => {warning.innerHTML = ''}, 3000); 
+            return false;
         } else {
             warning.innerHTML = 'Article found!'
             setModelArticles(obj.articles);
-            console.log(obj.articles);
             displayArticles();
             setTimeout(() => {warning.innerHTML = ''}, 3000); 
+            return true;
         }
-    }).then( res => {
-        setTimeout(() => {results.scrollIntoView({behavior: "smooth"});}, 100);
+    }).then(success => {
+        if (success) {
+            setTimeout(() => {
+                results.scrollIntoView({behavior: "smooth"});
+            }, 100);
+            updatePreviousSearches(prev);
+            
+        }
     })
 
     // Visually reset searchbar value
@@ -111,7 +122,7 @@ submit.onclick = () => {generalSearch(userSearchCategory.value)};
 // Allow for enter key press to search
 searchbar.addEventListener("keydown", (event) => {
     if (event.key == "Enter") {
-        generalSearch();
+        generalSearch(userSearchCategory.value);
     }
 });
 
@@ -120,8 +131,32 @@ option.onclick = () => {
     show.classList.toggle('active');
 };
 
+up.onclick = () => {
+    scrollto.scrollIntoView({behavior: "smooth"}); 
+}
 
 // -----------------------NON EVENT HANDLERS ----------------------------------
+
+function clearPreviousSearches() {
+    while(prevSearches.firstChild != null) {
+        prevSearches.removeChild(prevSearches.firstChild);
+    }
+}
+
+function updatePreviousSearches(search) {
+    previousSearches.push(search);
+    if (previousSearches.length == 1) {
+        prevSearchesFirst.innerHTML = search;
+    } else if (previousSearches.length > 1) {
+        clearPreviousSearches()
+        for (let i = previousSearches.length - 1; i >= 0; i--) {
+            let newOption = document.createElement('option'); 
+            newOption.innerHTML = previousSearches[i];
+            prevSearches.appendChild(newOption);
+        }
+        
+    }
+}
 
 // Set model article list
 function setModelArticles(articles) {
@@ -130,11 +165,14 @@ function setModelArticles(articles) {
     for(let i = 0; i < limit; i++){
         currentArticleList.push(articles[i]);
     } 
+    if (sortReversed.value == 'yes') {
+        currentArticleList.reverse()
+    }
 }
 
 // Clear model article list
 function clearModelArticles() {
-    currentArticleList = new Array(); 
+    currentArticleList = new Array()
 }
 
 // Clear view (user-facing) article list
@@ -168,7 +206,7 @@ function parseArticle(article) {
     let userFriendlyDate = getUserFriendlyDate(article.publishedAt);
     let author = article.author;
     let img = 'No image found';
-
+    
     let description = article.description;
     if(article.author == null || author == '') {
         author = 'No author found'; 
@@ -176,42 +214,45 @@ function parseArticle(article) {
     if (article.urlToImage != null) {
         // Reformat/resize image
         let image = new Image();
-        image.src = article.urlToimage;
-
+        image.src = article.urlToImage;
         let width = image.width;
         let height = image.height;
-        let aspectRatio = width/height;
         if (width > height) {
+            let ratio = height / width
             width = defaultImgWidth;
-            height = aspectRatio * width;
+            height = ratio * width;
         } else {
+            let ratio = width / height
             height = defaultImgHeight;
-            width = aspectRatio * height;
+            width = ratio * height;
         }
+        
+        let imgStyle = `display:block;margin-left:auto; margin-right:auto;
+                        padding:20px;`
 
-        // This error function is if the image is not able to load
-        let error = () => {
-            img = 'Image failed to load';
-            console.log('lol');
-        }
-        let imgStyle = `display:block;margin-left:auto; margin-right:auto;`
-        img = `<img src = "${article.urlToImage}" style = "${imgStyle}" 
-                width = "${width}" height = "${height} onerror=${error}"></img>`
+        img = ` <div id = 'article-right'>
+                <img src = "${article.urlToImage}" style = "${imgStyle}" 
+                width = "${width}" height = "${height}" 
+                onerror = "this.onerror=null;this.src='images/imageFail.png'"
+                ></img>
+                </div>`
     }
+
     if (description == null) {
         description = 'No summary available.';
     }
 
     newDiv.innerHTML = 
     img + `
-
+    <div id = article-left">
     <h3>"${article.title}"</h3> 
     
     <b>Author</b>: ${author}<br> 
     <b>Date Published</b>: ${userFriendlyDate}<br> 
     <b>Website</b>: ${article.source.name} <br>
     <p> Summary: ${description} </p> 
-    <p> Interested? Read more <a href="${article.url}" target = "_black">here</a></p>`
+    <p> Interested? Read more <a href="${article.url}" target = "_black">here</a></p>
+    </div>`
     return newDiv;
 }
 
@@ -237,17 +278,21 @@ function getUserFriendlyDate(date) {
 function getURL(category, kword = '', country = 'us', type = searchType.TOP) {
     if (category != searchCategory.NONE) {
         if (kword != ''){
-            return `${baseURL}${type}?q=${kword}&category=${category}&apikey=${apiKey}`; 
+            return [`${baseURL}${type}?q=${kword}&category=${category}&apikey=${apiKey}`, 
+                    `${category}: "${kword}"`]; 
         } else {
-            return `${baseURL}${type}?country=${country}&category=${category}&apikey=${apiKey}`; 
+            return [`${baseURL}${type}?country=${country}&category=${category}&apikey=${apiKey}`,
+                    `The general top news from ${category}`] 
         }
     } else { 
         if (kword != '') {
             type = searchType.EVERYTHING;
-            return `${baseURL}${type}?q=${kword}&apikey=${apiKey}`;
+            return [`${baseURL}${type}?q=${kword}&apikey=${apiKey}`,
+                    `"${kword}"`];
         } else {
             type = searchType.TOP;
-            return `${baseURL}${type}?country=${country}&apikey=${apiKey}`;  
+            return [`${baseURL}${type}?country=${country}&apikey=${apiKey}`,
+                    `The general top news`];  
         }
         
     }
