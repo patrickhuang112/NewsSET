@@ -22,7 +22,7 @@ body {
     text-align: right;
 }
 
-.bottom-right {
+#up {
     position : fixed;
     right : 0px;
     bottom :0px;
@@ -30,7 +30,7 @@ body {
     transition: all .5s ease-in-out;
 }
 
-.bottom-right:hover {
+#up:hover {
     transform : scale(1.1);
 }
 
