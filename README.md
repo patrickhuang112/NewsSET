@@ -21,6 +21,7 @@ Go to localhost:8000 to view the website locally.
 </li>
 <li>In the bottom right corner, a user can click the arrow bottom to go back to the search bar</li>
 </ul>
+
 ## Some Notes:
 <ul>
 
