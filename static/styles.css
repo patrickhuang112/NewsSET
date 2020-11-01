@@ -27,6 +27,7 @@ body {
     right : 0px;
     bottom :0px;
     z-index:7;
+    transition: all .5s ease-in-out;
 }
 
 .bottom-right:hover {
