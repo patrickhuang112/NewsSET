@@ -1,7 +1,7 @@
 # NewsSET
 
 An express web application for the 2020 Capital One Software Engineering Summit Challenge. Website is viewable online 
-<a href= "https://phuang-newsset-ses.herokuapp.com/" target = "_blank">here</a>
+<a href= "https://phuang-newsset-ses.herokuapp.com/" target = "_blank">here (not on Chrome, use Firefox)</a>
 ## Running the website:
 Navigate to this folder's home directory and run this command
 ```
