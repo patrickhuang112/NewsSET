@@ -1,6 +1,6 @@
 // News API url infos
 const proxyURL = "https://cors-anywhere.herokuapp.com/";
-const apiKey = '78b9d599c4f94f8fa3afb1a5458928d6';
+const apiKey = 'b685b96be5b94e67917e75113d2e5809';
 const baseURL = 'http://newsapi.org/v2/';
 
 // Enums
